@@ -158,13 +158,13 @@ try{
 	URLConnection URLconn = url.openConnection();
 	URLconn.setDoOutput(true);
 	OutputStreamWriter wr = new OutputStreamWriter(URLconn.getOutputStream());
-	wr.write(data);
+	wr.write(data); // Json write
 	wr.flush();
-	BufferedReader rd = new BufferedReader(new InputStreamReader(URLconn.getInputStream(), "UTF-8"));
+	BufferedReader rd = new BufferedReader(new InputStreamReader(URLconn.getInputStream(), "UTF-8")); // 결과값을 받아오기 위한 Reader
 	String line;
-	while ((line = rd.readLine()) != null)
+	while ((line = rd.readLine()) != null) // 결과값 출력
 	{
-		// System.out.println(line);
+		System.out.println(line);
 	}
 	wr.close();
 	rd.close();
