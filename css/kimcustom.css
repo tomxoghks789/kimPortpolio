@@ -1,6 +1,6 @@
 img {max-width:100%; height:auto}
 .footer-bottom {margin-top:0; padding-top:0;}
-.navbar-nav>li a img {transition:0.5s; width:auto; height:14px;}
+.navbar-nav>li a img { padding-top: 4px; transition:0.5s; width:auto; height:16px;}
 .navbar-nav>li a .red {display:none;}
 .navbar-nav>li a .white {display:block;}
 .navbar-nav>li a .black {display:none;}
