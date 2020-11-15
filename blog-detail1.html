@@ -99,7 +99,7 @@
           <p><img src="images/system.png" alt=""/></p>
           <blockquote>먼저 스마트 베드는 데이터를 수집하고 SQL로 가공하여 데이터베이스에 저장합니다. 그 후 서버는 최근에 저장된 데이터를 읽어와 자세판정 알고리즘을 수행하고결과를 데이터베이스에 저장합니다. 그 후 사용자는 모바일 디바이스에서 앱을 통해 사용자의 자세를 조회할 수 있습니다.</blockquote>
           <p><img src="images/system2.jpg" alt=""/></p>
-		<pre><code class="c"> // 라즈베리파이에서 Serial 통신을 위해 serial을 오픈하는 C코드
+          <pre><code class="c"> // 라즈베리파이에서 Serial 통신을 위해 serial을 오픈하는 C코드
 void setup()
 {
 	fflush(stdout);
@@ -109,23 +109,37 @@ void setup()
 		exit(1); //error
 	}
 }</code></pre>
-<pre><code class="c">	if (!mysql_real_connect(conn, server, user, password, NULL, 3306, NULL, 0)) {
-
-		printf("connect error.\n");     //DB접속 (MYSQL*, host, id, pw, null, port, 0)
-
-		exit(1);
-
+          <pre><code class="c">	
+// 라즈베리파이에서의 DB Connect 코드
+if (!mysql_real_connect(conn, server, user, password, NULL, 3306, NULL, 0)) { //필요한 Parameter들은 상수값으로 선언
+	printf("connect error.\n");
+	exit(1);
+}
+if (mysql_select_db(conn, database) != 0) { // 스키마 선택
+	mysql_close(conn);
+	printf("select_db fail.\n");
+	exit(1);
+}</code></pre>
+          <pre><code class="c">
+// Serial로부터 데이터 수신
+char data[300]; // 최대 300의 사이즈를 수신하기 때문에 변수 선언
+for (i = 0; i<300; i++){ // 쓰레기 값이 발생하는걸 방지하기 위해 Null로 초기화
+	data[i] = '\0';
+}
+for (i = 0; i<299; i++){
+	data[i] = serialGetchar(fd1); // 하나씩 읽어들이고 기록
+	if (data[i] == '/'){ // EOF라면 종료
+		break;
 	}
-
-	if (mysql_select_db(conn, database) != 0) {
-
-		mysql_close(conn);
-
-		printf("select_db fail.\n");
-
-		exit(1);
-
-	}</code></pre>
+}
+excute(data);</code></pre>
+          <pre><code class="c">
+// 발송지에 맞게 수신된 데이터를 SQL로 변환하여 실해
+if (chk == 'A') { // T라는 이름의 아두이노로 부터의 데이터라면
+	char head[] = "INSERT INTO a_section VALUES(1, ";
+	sprintf(temp, "%s%s%s%s%s", head, timeToString(t), head_tail, data_change, endTail); // 이 형태로 SQL로 변환
+}
+mysql_query(conn, temp); // Excute query</code></pre>
           <blockquote>스마트 베드는 8개의 아두이노와 상체와 하체를 담당하는 2개의 라즈베리파이가 있습니다. 라즈베리파이 하나당 8개의 아두이노를 관리하고 하나의 아두이노는 16개의 압력센서로 부터 데이터를 수집합니다. 먼저 섹션을 총 8개로 나누고 각 세션별 아두이노는 16개의 압력센서로부터 데이터를 측정합니다. 그 후 자신에게 부여된 태그를 헤더에 담아 Serial 통신을 통해서 라즈베리파이에게 전송합니다. 라즈베리파이는 C언어로 작성된 프로그램을 통해 SQL을 실행하여 데이터베이스에 데이터를 기록하게되는데 Wiring Pi 라이브러리를 활용해 Serial로부터 데이터를 전송받습니다. 그 후 전송받은 데이터를 SQL 형태로 가공하여 MySQL 라이브러리를 사용하여 데이터베이스에 기록합니다.</blockquote>
           <p>이렇게 데이터베이스에 저장된 압력값들은 Java로 구현된 멀티스레드 기반의 자세판정 프로그램에서 <b><a href="#">자세판정 알고리즘(자세한 내용 보기)</a></b>을 통해 자세를 판정하여 128개의 압력값과 판정 결과를 JSON 데이터 형식으로 변환하여 업체에서 제공한 REST API에 POST방식으로 데이터를 전송하면 업체내의 데이터베이스에 저장하도록 구현하였습니다.</p>
           <p>Lorem ipsum dolor sit amet, maecenas eget vestibulum justo imperdiet, wisi risus purus augue vulputate voluptate neque, curabitur dolor libero sodales vitae elit massa.</p>
