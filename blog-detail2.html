@@ -33,7 +33,7 @@
       <button class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse"> <span class="icon icon-bar"></span> <span class="icon icon-bar"></span> <span class="icon icon-bar"></span> </button>
       
       <!-- lOGO TEXT HERE --> 
-      <a href="index.html" class="navbar-brand">Kim's 포트폴리오</a> </div>
+      <a href="index.html" class="navbar-brand">김태환의 포트폴리오</a> </div>
     
     <!-- MENU LINKS -->
     <div class="collapse navbar-collapse">
@@ -58,7 +58,8 @@
   <div class="container">
     <div class="row">
       <div class="col-md-offset-1 col-md-5 col-sm-12">
-        <h2>Do you Know What Thing Really Makes Artist Nowadays?</h2>
+              <h2><b>상상을 현실로 이뤄내는 일을 하는<br>
+          개발자를 꿈꿉니다</b></h2>
       </div>
     </div>
   </div>
@@ -72,20 +73,29 @@
         <!-- BLOG THUMB -->
         <div class="blog-detail-thumb">
           <div class="blog-image"> <img src="images/blog-detail-image.jpg" class="img-responsive" alt="Blog Image"> </div>
-          <h2>What makes you happy everyday?</h2>
-          <p>Lorem ipsum dolor sit amet, maecenas eget vestibulum justo imperdiet, wisi risus purus augue vulputate voluptate neque, curabitur dolor libero sodales vitae elit massa. Lorem ipsum dolor sit amet, maecenas eget vestibulum justo imperdiet, wisi risus purus augue vulputate voluptate neque</p>
-          <blockquote>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sequi, quisquam, aut, eum, natus excepturi impedit ipsa rerum ratione id dolores ducimus minus eos veniam similique.</blockquote>
-          <p>Vivamus quis velit sed ante suscipit aliquam nec sed ex. Maecenas porta leo at mi suscipit congue. Donec ipsum metus, tristique eu leo ut, luctu Vivamus sit amet purus nec risus mollis tempor.</p>
-          <div class="blog-ads">
-            <h4>Blog Sample Advertising</h4>
-          </div>
+          <h2>딥러닝 기반의 체중 예측 SCI급 논문</h2>
+			 <p>Mobile computing LAB에서 진행한 개인 프로젝트로 스마트 베드에 누운 사람의 체중을 예측하는 논문입니다. SCI급 저널인 Sensors에 <a href="https://www.mdpi.com/1424-8220/20/12/3485">Prediction of Body Weight of a Person Lying on a Smart Mat in Nonrestraint and Unconsciousness Conditions</a>라는 제목으로 등재되었습니다.<br>
+          </p>
+          <p>이 프로젝트에 적용된 기술은 아래와 같습니다.<br>
+          </p>
           <ul>
-            <li>Brand Identity ipsum dolor eget vestibulum justo imper diet.</li>
-            <li>Social Marketing porta leo at mi suscipit congue. Donec ipsum metus, tristique leo luctus.</li>
-            <li>Wordpress Themes augue vulputate voluptate neque, curabitur dolor vitae massa.</li>
+            <li>Python</li>
+            <li>Keras(Deep Learning)</li>
           </ul>
-          <p>Lorem ipsum dolor sit amet, maecenas eget vestibulum justo imperdiet, wisi risus purus augue vulputate voluptate neque, curabitur dolor libero sodales vitae elit massa.</p>
-        </div>
+          <p>이전에 구축한 스마트 베드를 활용한 프로젝트로 스마트 베드 시스템에 딥러닝 기술을 적용하여 체중 예측 기능을 추가한 프로젝트입니다.</p>
+			<pre><code class="python">
+// Keras를 통한 레이어 구성
+def build_network(input_features=None):
+    inputs = Input(shape=(input_features,), name="input")
+    x = Dense(2048, activation='relu', name="hidden1")(inputs)
+    prediction = Dense(1, activation='linear', name="final") (x)
+    model = Model(inputs=inputs, outputs=prediction)
+    opt = optimizers.Adam(lr=0.005, beta_1=0.9, beta_2=0.999, epsilon=None, decay=0.0, amsgrad=False)
+    model.compile(optimizer=opt, loss='mean_absolute_error')
+    return model</code></pre>
+          <blockquote>이렇게 단층으로 모델을 구성하여 구현하였습니다. 실험 결과 MAE는 4.608, RMSE는 5.796을 나타내었습니다.</blockquote>
+        <img src="images/deep1.jpg" alt=""/> </div>
+		  <p>비전 기반의 체중 예측 연구의 경우 어두운 환경에서 측정이 어렵다는 환경적 한계가 존재하지만 본 연구는 128개의 압력센서를 활용한 체중 예측으로 환경적 한계로 부터 자유롭다는 차이가 있습니다.</p>
       </div>
     </div>
   </div>
