@@ -141,7 +141,35 @@ if (chk == 'A') { // T라는 이름의 아두이노로 부터의 데이터라면
 }
 mysql_query(conn, temp); // Excute query</code></pre>
           <blockquote>스마트 베드는 8개의 아두이노와 상체와 하체를 담당하는 2개의 라즈베리파이가 있습니다. 라즈베리파이 하나당 8개의 아두이노를 관리하고 하나의 아두이노는 16개의 압력센서로 부터 데이터를 수집합니다. 먼저 섹션을 총 8개로 나누고 각 세션별 아두이노는 16개의 압력센서로부터 데이터를 측정합니다. 그 후 자신에게 부여된 태그를 헤더에 담아 Serial 통신을 통해서 라즈베리파이에게 전송합니다. 라즈베리파이는 C언어로 작성된 프로그램을 통해 SQL을 실행하여 데이터베이스에 데이터를 기록하게되는데 Wiring Pi 라이브러리를 활용해 Serial로부터 데이터를 전송받습니다. 그 후 전송받은 데이터를 SQL 형태로 가공하여 MySQL 라이브러리를 사용하여 데이터베이스에 기록합니다.</blockquote>
-          <p>이렇게 데이터베이스에 저장된 압력값들은 Java로 구현된 멀티스레드 기반의 자세판정 프로그램에서 <b><a href="#">자세판정 알고리즘(자세한 내용 보기)</a></b>을 통해 자세를 판정하여 128개의 압력값과 판정 결과를 JSON 데이터 형식으로 변환하여 업체에서 제공한 REST API에 POST방식으로 데이터를 전송하면 업체내의 데이터베이스에 저장하도록 구현하였습니다.</p>
+          <p>이렇게 데이터베이스에 저장된 압력값들은 Java로 구현된 자세판정 프로그램에서 <b><a href="#">자세판정 알고리즘(자세한 내용 보기)</a></b>을 통해 자세를 판정하여 128개의 압력값과 판정 결과를 JSON 데이터 형식으로 변환하여 업체에서 제공한 REST API에 데이터를 전송하면 업체내의 데이터베이스에 저장하도록 구현하였습니다.</p>
+		  <pre><code class="java">
+// Java 기반의 JSON 데이터 전송 파트
+ArrayList<String> posutreData = new ArrayList<>(); 
+ArrayList<String> posutreChagnedData = new ArrayList<>();
+ArrayList<String> posutreChagnedDateData = new ArrayList<>();
+JSONObject jsonObject = new JSONObject();
+JSONArray jsonArray = new JSONArray(); // 128개의 압력센서값
+JSONObject jsonData = new JSONObject(); // 자세 데이터
+...
+// JSON으로 데이터를 전송하고 결과값을 받아오는 코드
+try{
+	String data = URLEncoder.encode("json_code", "UTF-8") + "=" + URLEncoder.encode(jsonInfo, "UTF-8");
+	URL url = new URL("http://www.l"); // 업체에서 제공한 API 주소
+	URLConnection URLconn = url.openConnection();
+	URLconn.setDoOutput(true);
+	OutputStreamWriter wr = new OutputStreamWriter(URLconn.getOutputStream());
+	wr.write(data);
+	wr.flush();
+	BufferedReader rd = new BufferedReader(new InputStreamReader(URLconn.getInputStream(), "UTF-8"));
+	String line;
+	while ((line = rd.readLine()) != null)
+	{
+		// System.out.println(line);
+	}
+	wr.close();
+	rd.close();
+}
+		  </code></pre>
           <p>Lorem ipsum dolor sit amet, maecenas eget vestibulum justo imperdiet, wisi risus purus augue vulputate voluptate neque, curabitur dolor libero sodales vitae elit massa.</p>
         </div>
       </div>
