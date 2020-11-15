@@ -141,8 +141,11 @@ if (chk == 'A') { // T라는 이름의 아두이노로 부터의 데이터라면
 }
 mysql_query(conn, temp); // Excute query</code></pre>
           <blockquote>스마트 베드는 8개의 아두이노와 상체와 하체를 담당하는 2개의 라즈베리파이가 있습니다. 라즈베리파이 하나당 8개의 아두이노를 관리하고 하나의 아두이노는 16개의 압력센서로 부터 데이터를 수집합니다. 먼저 섹션을 총 8개로 나누고 각 세션별 아두이노는 16개의 압력센서로부터 데이터를 측정합니다. 그 후 자신에게 부여된 태그를 헤더에 담아 Serial 통신을 통해서 라즈베리파이에게 전송합니다. 라즈베리파이는 C언어로 작성된 프로그램을 통해 SQL을 실행하여 데이터베이스에 데이터를 기록하게되는데 Wiring Pi 라이브러리를 활용해 Serial로부터 데이터를 전송받습니다. 그 후 전송받은 데이터를 SQL 형태로 가공하여 MySQL 라이브러리를 사용하여 데이터베이스에 기록합니다.</blockquote>
-          <p>이렇게 데이터베이스에 저장된 압력값들은 Java로 구현된 자세판정 프로그램에서 <b><a href="#">자세판정 알고리즘(자세한 내용 보기)</a></b>을 통해 자세를 판정하여 128개의 압력값과 판정 결과를 JSON 데이터 형식으로 변환하여 업체에서 제공한 REST API에 데이터를 전송하면 업체내의 데이터베이스에 저장하도록 구현하였습니다.</p>
-		  <pre><code class="java">
+          <p><br>
+            이렇게 데이터베이스에 저장된 압력값들은 Java로 구현된 자세판정 프로그램에서 <b><a href="#">자세판정 알고리즘(자세한 내용 보기)</a></b>을 통해 자세를 판정하여 128개의 압력값과 판정 결과를 JSON 데이터 형식으로 변환하여 업체에서 제공한 REST API에 데이터를 전송하면 업체내의 데이터베이스에 저장하도록 구현하였습니다.<br>
+            <br>
+          </p>
+          <pre><code class="java">
 // Java 기반의 JSON 데이터 전송 파트
 ArrayList<String> posutreData = new ArrayList<>(); 
 ArrayList<String> posutreChagnedData = new ArrayList<>();
@@ -170,11 +173,16 @@ try{
 	rd.close();
 }
 		  </code></pre>
-          <p>이렇게 저장된 데이터들은 안드로이드 앱을 통해서 조회가 가능하며 모바일 앱에서는 낙상과 욕창의 위험이 발생하면 Push알림을 전송받을 수 있으며 사용자의 자세 통계 또한 조회가 가능합니다.</p>
-	    <img src="images/s1.jpg" width="30%" alt=""/><img src="images/s2.jpg" width="30%" alt=""/></div>
-		          <p><b>왼쪽부터 앱의 메인화면, Push로 전송받은 위험 알람 로그</b></p>
-				  <p>메인화면은 현재 사용자의 상태를 조회할 수 있으며 상태 데이터의 경우 PHP를 통해 우회해서 조회하였고 Push 로그의 경우 Push가 수신된다면 앱 사용자별 DB에 따로 저장하여 환자의 위험이 언제 발생했는지 조회가 가능하도록 구현하였습니다. Push는 자세판정 프로그램이 위험을 감지하였을때 전송하도록 구현하였고 FCM을 기반으로 구현하였습니다.</p>
-				  <pre><code class="java">
+          <p><br>
+            이렇게 저장된 데이터들은 안드로이드 앱을 통해서 조회가 가능하며 모바일 앱에서는 낙상과 욕창의 위험이 발생하면 Push알림을 전송받을 수 있으며 사용자의 자세 통계 또한 조회가 가능합니다.<br>
+            <br>
+          </p>
+          <img src="images/s1.jpg" width="30%" alt=""/><img src="images/s2.jpg" width="30%" alt=""/></div>
+        <p><br>
+          <b>왼쪽부터 앱의 메인화면, Push로 전송받은 위험 알람 로그</b></p>
+        <p>메인화면은 현재 사용자의 상태를 조회할 수 있으며 상태 데이터의 경우 PHP를 통해 우회해서 조회하였고 Push 로그의 경우 Push가 수신된다면 앱 사용자별 DB에 따로 저장하여 환자의 위험이 언제 발생했는지 조회가 가능하도록 구현하였습니다. Push는 자세판정 프로그램이 위험을 감지하였을때 전송하도록 구현하였고 FCM을 기반으로 구현하였습니다.<br>
+        </p>
+        <pre><code class="java">
 // 안드로이드에서 Push 수신 부분
 @Override
 public void onMessageReceived(RemoteMessage remoteMessage) { // 메세지가 수신된다면
@@ -194,9 +202,10 @@ public void onMessageReceived(RemoteMessage remoteMessage) { // 메세지가 수
     }
 }
 </code></pre>
-			<img src="images/s3.jpg" width="30%" alt=""/><img src="images/s4.jpg" width="30%" alt=""/><img src="images/s5.jpg" width="30%" alt=""/> 
-					          <p><b>왼쪽부터 자세별 통계 조회화면, 날짜 선택화면, 해당되는 날짜의 데이터</b></p>
-				  <p>PHP를 통해서 사용자가 선택한 날짜의 데이터를 DB로부터 읽어오고 mpandroidchartlibrary-2-2-4 라이브러리를 통하여 시각화 하였습니다.</p>
+        <img src="images/s3.jpg" width="30%" alt=""/><img src="images/s4.jpg" width="30%" alt=""/><img src="images/s5.jpg" width="30%" alt=""/>
+        <p><br>
+          <b>왼쪽부터 자세별 통계 조회화면, 날짜 선택화면, 해당되는 날짜의 데이터</b></p>
+        <p>PHP를 통해서 사용자가 선택한 날짜의 데이터를 DB로부터 읽어오고 mpandroidchartlibrary-2-2-4 라이브러리를 통하여 시각화 하였습니다.</p>
       </div>
     </div>
   </div>

@@ -18,7 +18,7 @@
 <!-- MAIN CSS -->
 <link rel="stylesheet" href="css/templatemo-style.css">
 <link rel="stylesheet" href="css/kimcustom.css">
-		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/vs2015.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/vs2015.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script> <script>hljs.initHighlightingOnLoad();</script>
 </head>
 <body>
@@ -53,14 +53,13 @@
   </div>
 </section>
 
-
 <!-- BLOG HEADER -->
 <section id="blog-header" data-stellar-background-ratio="0.5">
   <div class="overlay"></div>
   <div class="container">
     <div class="row">
       <div class="col-md-offset-1 col-md-5 col-sm-12">
-              <h2><b>상상을 현실로 이뤄내는 일을 하는<br>
+        <h2><b>상상을 현실로 이뤄내는 일을 하는<br>
           개발자를 꿈꿉니다</b></h2>
       </div>
     </div>
@@ -76,25 +75,31 @@
         <div class="blog-detail-thumb">
           <div class="blog-image"> <img src="images/blog-detail-image.jpg" class="img-responsive" alt="Blog Image"> </div>
           <h2>버스 정류소 조회 앱</h2>
-			 <p>개인 프로젝트로 서울 버스정보 오픈API를 활용하여 정류소 및 버스 정보 조회하는 기능을 합니다.<br>
+          <p>개인 프로젝트로 서울 버스정보 오픈API를 활용하여 정류소 및 버스 정보 조회하는 기능을 합니다.<br>
           </p>
           <p>이 프로젝트에 적용된 기술은 아래와 같습니다.<br>
           </p>
           <ul>
             <li>Java</li>
             <li>Android</li>
-			  <li>SQLite</li>
-			  <li>서울 버스정보 오픈API</li>
-			  <li>XML</li>
+            <li>SQLite</li>
+            <li>서울 버스정보 오픈API</li>
+            <li>XML</li>
           </ul>
-         </div>
-		  <img src="images/b1.png" width="30%" alt=""/><img src="images/b2.png" width="30%" alt=""/>
-		  <p>왼쪽부터 앱의 메인화면과 정류소 클릭 시 나오는 화면 앱의 메인에서는 GPS에서 위치정보를 수신하여 주변 정류소 위치를 API에 요청하고 XML로 데이터를 받아 위치정보를 Parsing하여 Google Map API를 활용해 화면에 Pin을 출력한다. 정류소를 클릭하면 해당하는 정류소에 정거하는 버스들의 넘버와 남은 시간과 남은 정거장 수를 출력해준다.</p>
-		  
-		  <img src="images/b3.png" width="30%" alt=""/><img src="images/b4.png" width="30%" alt=""/>
-		   <p>SQLite를 활용하여 즐겨찾기를 추가할 수 있으며 메인화면에서 조회가 가능하고 즐겨찾기 탭에서 클릭하여 즐겨찾기를 삭제 할 수도 있다.</p>
-		  <p>각각의 Station은 Station 클래스를 만들어 관리하였다.</p>
-		  <pre><code class="java">
+          <br>
+        </div>
+        <img src="images/b1.png" width="30%" alt=""/><img src="images/b2.png" width="30%" alt=""/>
+        <p><br>
+          왼쪽부터 앱의 메인화면과 정류소 클릭 시 나오는 화면 앱의 메인에서는 GPS에서 위치정보를 수신하여 주변 정류소 위치를 API에 요청하고 XML로 데이터를 받아 위치정보를 Parsing하여 Google Map API를 활용해 화면에 Pin을 출력한다. 정류소를 클릭하면 해당하는 정류소에 정거하는 버스들의 넘버와 남은 시간과 남은 정거장 수를 출력해준다.<br>
+          <br>
+        </p>
+        <img src="images/b3.png" width="30%" alt=""/><img src="images/b4.png" width="30%" alt=""/>
+        <p><br>
+          SQLite를 활용하여 즐겨찾기를 추가할 수 있으며 메인화면에서 조회가 가능하고 즐겨찾기 탭에서 클릭하여 즐겨찾기를 삭제 할 수도 있다.<br>
+        </p>
+        <p>각각의 Station은 Station 클래스를 만들어 관리하였다.<br>
+        </p>
+        <pre><code class="java">
 public class Station
 {
 	List<String> X = null;
@@ -181,8 +186,11 @@ public class Station
 	}
 }
 </code></pre>
-<p>API를 통한 정류소 데이터 조회는 다음과 같이 AsyncTask로 구현하였다.</p>
-<pre><code class="java">
+        <p><br>
+          API를 통한 정류소 데이터 조회는 다음과 같이 AsyncTask로 구현하였다.<br>
+          <br>
+        </p>
+        <pre><code class="java">
 public class BusLineInfoCollector extends AsyncTask<String, String, String>
 {
 	Context MainCon;
@@ -191,7 +199,7 @@ public class BusLineInfoCollector extends AsyncTask<String, String, String>
 	List<String> StationName = new ArrayList<String>(); // 남은 시간
 	List<String> RemainTime = new ArrayList<String>(); // 현재 버스의 위치
 	List<String> StationNumberOfBus = new ArrayList<String>(); // 현재 버스의 위치
-	List<String> StationNumber = new ArrayList<String>();// 정ㄹ소의 위치
+	List<String> StationNumber = new ArrayList<String>();// 정류소의 위치
 
 	public BusLineInfoCollector(String parameterBusId, Context MainCon)
 	{
@@ -314,7 +322,6 @@ public class BusLineInfoCollector extends AsyncTask<String, String, String>
     </div>
   </div>
 </footer>
-
 
 <!-- SCRIPTS --> 
 <script src="js/jquery.js"></script> 

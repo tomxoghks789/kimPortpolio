@@ -18,7 +18,7 @@
 <!-- MAIN CSS -->
 <link rel="stylesheet" href="css/templatemo-style.css">
 <link rel="stylesheet" href="css/kimcustom.css">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/vs2015.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/vs2015.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script> <script>hljs.initHighlightingOnLoad();</script>
 </head>
 <body>
@@ -53,14 +53,13 @@
   </div>
 </section>
 
-
 <!-- BLOG HEADER -->
 <section id="blog-header" data-stellar-background-ratio="0.5">
   <div class="overlay"></div>
   <div class="container">
     <div class="row">
       <div class="col-md-offset-1 col-md-5 col-sm-12">
-              <h2><b>상상을 현실로 이뤄내는 일을 하는<br>
+        <h2><b>상상을 현실로 이뤄내는 일을 하는<br>
           개발자를 꿈꿉니다</b></h2>
       </div>
     </div>
@@ -76,7 +75,7 @@
         <div class="blog-detail-thumb">
           <div class="blog-image"> <img src="images/blog-detail-image.jpg" class="img-responsive" alt="Blog Image"> </div>
           <h2>딥러닝 기반의 누운사람의 자세 판정 논문</h2>
-			 <p>Mobile computing LAB에서 진행한 개인 프로젝트로 스마트 베드에 누운 사람의 자세를 딥러닝을 활용하여 판정하는 것에 대한 논문입니다. Scopus급 저널인 TEST Engineering & Management에 <a href="http://testmagzine.biz/index.php/testmagzine/article/view/327">Discrimination of sleep posture using CNN in smart bed</a>라는 제목으로 등재되었고 러시아 블라디보스토크에서 열린 IICCC2019 학회에서 Best Paper Award를 수상하였습니다.<br>
+          <p>Mobile computing LAB에서 진행한 개인 프로젝트로 스마트 베드에 누운 사람의 자세를 딥러닝을 활용하여 판정하는 것에 대한 논문입니다. Scopus급 저널인 TEST Engineering & Management에 <a href="http://testmagzine.biz/index.php/testmagzine/article/view/327">Discrimination of sleep posture using CNN in smart bed</a>라는 제목으로 등재되었고 러시아 블라디보스토크에서 열린 IICCC2019 학회에서 Best Paper Award를 수상하였습니다.<br>
           </p>
           <p>이 프로젝트에 적용된 기술은 아래와 같습니다.<br>
           </p>
@@ -84,8 +83,11 @@
             <li>Python</li>
             <li>Keras (Deep Learning)</li>
           </ul>
-          <p>이전에 구축한 스마트 베드를 활용한 프로젝트로 스마트 베드 시스템에 딥러닝 기술을 적용하여 누운사람의 자세를 판정하는 프로젝트입니다.</p>
-			<pre><code class="python">
+          <p><br>
+            이전에 구축한 스마트 베드를 활용한 프로젝트로 스마트 베드 시스템에 딥러닝 기술을 적용하여 누운사람의 자세를 판정하는 프로젝트입니다.<br>
+            <br>
+          </p>
+          <pre><code class="python">
 // Keras를 통한 CNN 모델 구현
 model = Sequential()
 model.add(Conv2D(32, kernel_size=(2, 2), input_shape=(16, 8, 1), activation='relu'))
@@ -97,10 +99,11 @@ model.add(Dense(128, activation='relu'))
 model.add(Dropout(rate=0.25))
 model.add(Dense(3, activation='softmax'))
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])</code></pre>
-			<img src="images/m2.jpg" alt=""/> 
+          <img src="images/m2.jpg" alt=""/>
           <blockquote>Keras를 활용하여 CNN모델을 압력값 데이터에 맞게 수정하였고 실험 결과 자세판정 정확도는 94.42%였습니다.</blockquote>
-        <img src="images/m1.png" alt=""/> </div>
-		  <p><a href="https://tomxoghks789.github.io/kimPortpolio/blog-detail1.html">이전의 연구</a>에 비해 판정 정확도를 4%가량 개선하였고 더 많은 데이터가 수집될 때 정확도를 더 개선할 수 있습니다.</p>
+          <img src="images/m1.png" alt=""/> </div>
+        <p><br>
+          <a href="https://tomxoghks789.github.io/kimPortpolio/blog-detail1.html">이전의 연구</a>에 비해 판정 정확도를 4%가량 개선하였고 더 많은 데이터가 수집될 때 정확도를 더 개선할 수 있습니다.</p>
       </div>
     </div>
   </div>
@@ -126,7 +129,6 @@ model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accur
     </div>
   </div>
 </footer>
-
 
 <!-- SCRIPTS --> 
 <script src="js/jquery.js"></script> 
