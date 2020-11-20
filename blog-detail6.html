@@ -191,6 +191,97 @@ public class User_MainActivity extends Activity
           </pre>
            
           </p>
+          <p>기사와 사용자간의 통신은 TCP/IP로 구현하였으며 DB로부터 서로의 IP주소를 읽어와 전송하는 방식으로 구현하였습니다. 기사용 SocketOpner는 다음과 같습니다.</p>
+          
+          <pre><code class="java">
+// 기사용 SocketOpner
+public class DriverSocketOpener implements Runnable
+{
+
+	Handler handling = new Handler();
+	Context exCon;
+	String targetIP;
+	...
+	
+	public DriverSocketOpener(Context exCon, String targetIP)
+	{
+		this.exCon = exCon;
+		this.targetIP = targetIP;
+	}
+
+	@Override
+	public void run()
+	{
+		ServerSocket serverSocket = null;
+		Socket socket = null;
+		try
+		{
+			// 리스너 소켓 생성 후 대기
+			serverSocket = new ServerSocket(----); // 보안을 위해 Port 번호는 가렸습니다
+			Log.i("test", targetIP + "서버 실행..");
+			while (true)
+			{
+				socket = serverSocket.accept();
+				Log.i("test", "수신중..");
+				DataInputStream dis;
+				dis = new DataInputStream(socket.getInputStream());
+				final String userName = dis.readUTF();
+				final String[] temp = userName.split("#");
+				dis.close();
+				// 상대방으로부터 데이터 수신
+				...
+				else if (temp[0].equals("1")) // 수신된 데이터 중 맨 앞 글자가 1이면 채팅 메세지
+				{
+					handling.post(new Runnable()
+					{
+						@Override
+						public void run()
+						{
+							// TODO Auto-generated method stub
+							Log.i("test", "기사 : 1");
+							((Driver_MainActivity) exCon).messageShower(temp[1], temp[2]); // 메세지 출력
+						}
+					});
+				}
+				else if (temp[0].equals("2"))
+				{
+					handling.post(new Runnable()
+					{
+						@Override
+						public void run()
+						{
+							Log.i("test", "기사 : 2");
+							((Driver_MainActivity) exCon).acceptDrive(temp[1], 0); // 메인 액티비티에서 승인후 작업 시작
+						}
+					});
+				}
+				else if (temp[0].equals("3"))
+				{
+					handling.post(new Runnable()
+					{
+						@Override
+						public void run()
+						{
+							Log.i("test", "기사 : 3");
+							((Driver_MainActivity) exCon).showAcceptDialog(temp[1], temp[2]); // 승락 다이얼로그 출력
+						}
+					});
+				}
+				else if (temp[0].equals("4"))
+				{
+					handling.post(new Runnable()
+					{
+						@Override
+						public void run()
+						{
+							Log.i("test", "기사 : 4");
+							((Driver_MainActivity) exCon).cancelDrive(); // 사용자의 요청 취소 액션
+						}
+					});
+				}
+				...
+          </code>
+          </pre>
           <img src="images/t1.jpg" alt=""/> </div>
         <blockquote>C#으로 구현된 관리자 앱으로 매출조회, 문의조회, 현재 이용자 조회등의 기능을 구현하였습니다.</blockquote>
       </div>
