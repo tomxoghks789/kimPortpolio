@@ -98,8 +98,102 @@
           <br>
           <iframe width="800" height="515" src="https://www.youtube.com/embed/gqv1T6sQ7jk" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
           <blockquote>앱에서의 상품등록과 채팅기능 시연 영상</blockquote>
+          
+          <p>사용자는 메뉴에서 관심있는 해시태그를 등록하면 해당 해시태그를 가진 상품이 등록될 때 알림을 받을 수 있습니다. Push 알림은 FCM기반이며 모바일 디바이스가 아닌 서버에서 전송합니다.</p>
+<pre><code class="java">
+// FCM 기반의 Push 전송
+// 사용자가 알람을 받기 희망하는 해쉬태그를 가진 상품이 업로드 될때 Multi Thread 기반의 서버에서 Push 전송하는 코드
+class PushSender extends Thread
+{
+	public final static String AUTH_KEY_FCM = "AAAA3GXD.."; 
+	public final static String API_URL_FCM = "https://fcm.googleapis.com/fcm/send";
+	Socket socket;
+	DataInputStream dis;
+	FileOutputStream fos;
+	BufferedOutputStream bos;
+	ArrayList<String> tokens;
+	String Query;
+
+	public PushSender(Socket socket)
+	{
+		this.socket = socket;
+	}
+
+	@Override
+	public void run()
+	{
+		try
+		{
+			tokens = new ArrayList<String>();
+			dis = new DataInputStream(socket.getInputStream());
+			String hashtags = dis.readUTF();
+			dis.close();
+			System.out.println(hashtags);
+			String[] hashTag_Array;
+			hashtags = hashtags.replace(" ", "");
+			hashTag_Array = hashtags.split("#"); // 해시태그를 # 단위로 자름
+			Connection conn = null; // Database 연결을 위한 컨넥션 객체 선언
+			ResultSet rSet = null; // Query 결과를 저장하는 객체 선언
+			Statement stmt = null; // stmp 또는 pstmp를 선언하여 사용할 수 있다.
+			for (int i = 0; i < hashTag_Array.length; i++) // 해시태그의 갯수 만큼 실행
+			{
+				tokens.clear();
+				try
+				{
+					// DB로부터 알람 희망자를 조회하는 코드
+					Class.forName(DB_Setting_Value.Setting_Value.DBCLASS).newInstance();
+					conn = DriverManager.getConnection(DB_Setting_Value.Setting_Value.SERVER_DB_IP, DB_Setting_Value.Setting_Value.DBID, DB_Setting_Value.Setting_Value.DBPW);
+					stmt = conn.createStatement();
+					Query = "SELECT token FROM User_Info AS INFO INNER JOIN User_Hashtag AS HASHTAG ON INFO.ID = HASHTAG.UserID WHERE Hashtag = '" + hashTag_Array[i] + "';";
+					System.out.println(Query);
+					rSet = stmt.executeQuery(Query);
+					while (rSet.next())
+					{
+						tokens.add(rSet.getString(1));
+					}
+					// Push 전송
+					System.out.println(tokens);
+					for (int j = 0; j < tokens.size(); j++)
+					{
+						sendPushNotification(tokens.get(j), hashTag_Array[i]);
+					}
+				...
+	// 알람 전송 메소드
+	public void sendPushNotification(String deviceToken, String tagName) throws IOException
+	{
+		String result = "";
+		URL url = new URL(API_URL_FCM);
+		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+
+		conn.setUseCaches(false);
+		conn.setDoInput(true);
+		conn.setDoOutput(true);
+
+		conn.setRequestMethod("POST");
+		conn.setRequestProperty("Authorization", "key=" + AUTH_KEY_FCM);
+		conn.setRequestProperty("Content-Type", "application/json");
+
+		JSONObject json = new JSONObject(); // Json 형태로 Push에 필요한 데이터를 담아 요청
+		json.put("to", deviceToken.trim());
+		JSONObject info = new JSONObject();
+		info.put("title", "등록 알림!"); // Notification title
+		info.put("body", tagName); // Notification
+		json.put("data", info);
+
+		try
+		{
+			OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream(), "UTF-8");
+			wr.write(json.toString());
+			wr.flush();
+			BufferedReader br = new BufferedReader(new InputStreamReader((conn.getInputStream())));
+		...
+	}
+}
+
+</code>
+</pre>
           <p><br>
-            이미지의 경우 TCP/IP로 서버에 전송하여 저장하게 됩니다.<br>
+            이미지의 경우 TCP/IP Socket 통신으로 서버에 전송하여 저장하게 됩니다.<br>
             <br>
           </p>
           <pre><code class="java">
@@ -139,11 +233,11 @@ public class Image_Uploader extends AsyncTask<String, String, String>
 	String ID;
 	String sendBack;
 	Context exCon;
-...
-Socket socket = null;
-DataOutputStream dos;
-FileInputStream fis;
-BufferedInputStream bis;
+	...
+	Socket socket = null;
+	DataOutputStream dos;
+	FileInputStream fis;
+	BufferedInputStream bis;
 try
 {
 	String userName = ID;
@@ -167,6 +261,7 @@ try
 	fis.close();
 ...
 </code></pre>
+
           <p><br>
             나머지 기능의 경우 DB 연동이 필요하거나 외부와 통신이 필요한 경우 모두 AsyncTask를 사용하여 구현하였고 Context를 활용하여 결과값을 UI에 적용시켰습니다.</p>
         </div>
