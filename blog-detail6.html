@@ -191,7 +191,71 @@ public class User_MainActivity extends Activity
           </pre>
            
           </p>
-          <p>기사와 사용자간의 통신은 TCP/IP로 구현하였으며 DB로부터 서로의 IP주소를 읽어와 전송하는 방식으로 구현하였습니다. 기사용 SocketOpner는 다음과 같습니다.</p>
+          <p><br>사용자가 지정한 범위내의 대리운전 기사를 조회하는 코드는 다음과 같습니다.<br><br></p>
+          <pre><code class="java">
+public class Find_Driver extends AsyncTask<String, String, String>
+{
+	double Lat;
+	double Lng;
+	Context exCon;
+	ArrayList<Double> LatList = new ArrayList<Double>();
+	ArrayList<Double> LngList = new ArrayList<Double>();
+	ArrayList<String> IDList = new ArrayList<String>(); // 기사의 ID
+	ArrayList<String> genderList = new ArrayList<String>(); // 사용자의 안전을 위해 사용자가 원하는 성별의 기사를 선택할 수 있도록 기사의 성별을 표시
+	String distance; // 사용자가 지정한 범위
+
+	public Find_Driver(double Lat, double Lng, Context exCon, String distance)
+	{
+		this.exCon = exCon;
+		this.Lat = Lat;
+		this.Lng = Lng;
+		this.distance = distance;
+	}
+
+	@Override
+	protected String doInBackground(String... params)
+	{
+		// TODO Auto-generated method stub
+		Double castedRange = 0.1; // 조회 범위
+		if(!distance.equals(""))
+		{
+			castedRange = Double.valueOf(distance).doubleValue() / 1000; // 기본 범위 설정
+		}
+		Connection conn = null; // Database 연결을 위한 컨넥션 객체 선언
+		PreparedStatement pre = null; // stmp 또는 pstmp를 선언하여 사용할 수 있다.
+		ResultSet rSet = null;
+		String Query;
+		try
+		{
+			Class.forName(dataStruct.DataStruct.Data.DBCLASS).newInstance();
+			conn = DriverManager.getConnection(dataStruct.DataStruct.Data.SERVER_DB_IP, dataStruct.DataStruct.Data.DBID, dataStruct.DataStruct.Data.DBPW);
+			Query = "SELECT Lat, Lng, ID, Gender FROM (SELECT inQuery.ID, Lat, Lng, Match, Class, Last_Refresh, Gender, ( 6371 * acos( cos( radians(" + Lat + ") ) * cos( radians( Lat ) ) * cos( radians( Lng ) - radians(" + Lng + ") )  + sin( radians(" + Lat
+					+ ") ) * sin( radians( Lat ) ) ) ) AS distance FROM User_State AS inQuery INNER JOIN Users AS outQuery ON inQuery.ID = outQuery.ID INNER JOIN Driver_Info AS Info ON Info.Driver_ID = outQuery.ID) AS a WHERE a.distance < " + castedRange + " AND a.Class = '1' AND a.match = '0' AND Last_Refresh > DATEADD(minute, -10, GETDATE());";
+			pre = conn.prepareStatement(Query);
+			rSet = pre.executeQuery();
+			while (rSet.next())
+			{
+				LatList.add(rSet.getDouble(1));
+				LngList.add(rSet.getDouble(2));
+				IDList.add(rSet.getString(3));
+				genderList.add(rSet.getString(4));
+			}
+		}
+		...
+
+	@Override
+	protected void onPostExecute(String result)
+	{
+		((User_MainActivity) exCon).mapOnActivity.clear();
+		for (int i = 0; i < LatList.size(); i++)
+		{
+			((User_MainActivity) exCon).showDriver(LatList.get(i), LngList.get(i), IDList.get(i), genderList.get(i)); // 조회된 기사 출력
+		}
+	}
+
+}
+          </code></pre>
+          <p><br>기사와 사용자간의 통신은 TCP/IP로 구현하였으며 DB로부터 서로의 IP주소를 읽어와 전송하는 방식으로 구현하였습니다. 기사용 SocketOpner는 다음과 같습니다.<br><br></p>
           
           <pre><code class="java">
 // 기사용 SocketOpner
@@ -280,6 +344,72 @@ public class DriverSocketOpener implements Runnable
 					});
 				}
 				...
+          </code>
+          </pre>
+          <p><br>대리운전 기사를 통해 목적지로 향하는 길에 사용자 앱에서 예기치 못한 에러로 앱이 다운되었을때 앱을 복구하는 기능에 관한 코드입니다.<br><br></p>
+          <pre><code class="java">
+// 메인 액티비티 실행시 DB로 부터 사용자가 대리운전 서비스 중인지 아닌지 판단후
+// 서비스 중임에도 불구하고 메인화면에 있다면 아래의 코드를 수행하여 대리운전중 화면으로 변경합니다.
+public class DB_CustomerRollBack extends AsyncTask<String, String, String>
+{
+	Context exCon;
+	String customerID = null;
+	String flag = null;
+	String driverID = null;
+	String destination = null;
+	String historyCode = null;
+	String stateCode = null;
+
+	public DB_CustomerRollBack(Context exCon, String customerID)
+	{
+		this.exCon = exCon;
+		this.customerID = customerID;
+	}
+
+	@Override
+	protected String doInBackground(String... params)
+	{
+		// DB로 부터 운행 데이터 수조회
+		Connection conn = null; // Database 연결을 위한 컨넥션 객체 선언
+		PreparedStatement pre = null; // stmp 또는 pstmp를 선언하여 사용할 수 있다.
+		ResultSet rSet = null;
+		String Query;
+		try
+		{
+			Class.forName(dataStruct.DataStruct.Data.DBCLASS).newInstance();
+			conn = DriverManager.getConnection(dataStruct.DataStruct.Data.SERVER_DB_IP, dataStruct.DataStruct.Data.DBID, dataStruct.DataStruct.Data.DBPW);
+			Query = "SELECT Driver_ID, Destination, HistoryCode FROM Match WHERE Customer_ID = '" + customerID + "';";
+			pre = conn.prepareStatement(Query);
+			rSet = pre.executeQuery();
+			if (rSet.next())
+			{
+				flag = "1";
+				driverID = rSet.getString(1);
+				destination = rSet.getString(2);
+				stateCode = rSet.getString(3);
+			}
+			else
+			{
+				flag = "0";
+			}
+		}
+		...
+
+	@Override
+	protected void onPostExecute(String result)
+	{
+		super.onPostExecute(result);
+		if (flag.equals("1") && stateCode == null)
+		{
+			destination = "목적지 : " + destination;
+			((User_MainActivity) exCon).RollBackDriving(driverID, destination);
+		}
+		else if (flag.equals("1") && stateCode != null)
+		{
+			((User_MainActivity) exCon).showDialogMessage("운행중 입니다!");
+		}
+	}
+}
           </code>
           </pre>
           <img src="images/t1.jpg" alt=""/> </div>
