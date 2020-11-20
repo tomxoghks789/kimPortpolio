@@ -88,10 +88,108 @@
             <li>Google Map API v2</li>
           </ul>
           <br>
-          <iframe width="800" height="515" src="https://www.youtube.com/embed/U1jyiPlwcEI" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-          <p><br>
-            앱 시연 영상으로 목적지 설정기능, 채팅 기능 그리고 가격흥정을 볼 수 있으며 고객평가, 매출 조회 그리고 History 조회기능등이 있습니다.<br>
-            <br>
+          <p>앱 시연 영상을 통해 지도를 길게 클릭함으로 목적지 설정기능, 채팅 기능 그리고 가격흥정 기능 시연을 시청가능하며 이 앱의 기능은 고객평가, 매출 조회 그리고 History 조회기능등이 있습니다.
+          왼쪽이 사용자 오른쪽이 대리운전 기사입니다.<br>
+            <br></p><br>
+          <iframe width="800" height="515" src="https://www.youtube.com/embed/U1jyiPlwcEI?amp;mute=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+          <br><br><p>앱의 메인 액티비티를 출력할땐 슬라이드 메뉴 구현과 구글지도의 초기화를 위한 코드를 구현하였습니다.</p>
+          <pre><code class="java">
+// User의 메인화면
+// Google Map API의 초기화, Custom 타이틀바 적용 코드
+public class User_MainActivity extends Activity
+{
+	// Google map과 GPS 초기화
+	public GoogleMap mapOnActivity; // Google map 객체
+	double Lat = 0; // 위도
+	double Lng = 0; // 경도
+	double distance = 0; // 기사 검색 범위
+	Location location; 
+	LocationManager locationManager; // GPS로부터 위치를 조회하기 위한 객체
+	LocationListener locationListener;
+	Geocoder coder;
+	...
+	// Google map과 GPS 초기화 끝
+	// Custom 타이틀 바와 슬라이드 메뉴 초기화
+	ArrayList<Menu_control> alist;
+	boolean menuOpen = false;
+	ListView menuList;
+	LinearLayout UserMenu;
+	ImageView menuBtn;
+	DataAdapter adapter;
+	Animation Open_Slider;
+	Animation Close_Slider;
+	DisplayMetrics deviceWidth;
+	int widthOfDevice = 0;
+	ProgressDialog sendMessageDialog;
+	String sentDriverID = null;
+	boolean matched = false;
+	Window win;
+	LayoutInflater inflater;
+	LinearLayout linear;
+	LinearLayout.LayoutParams paramlinear;
+	...
+	// Custom 타이틀 바와 슬라이드 메뉴 초기화 끝
+	
+	@Override
+	protected void onCreate(Bundle savedInstanceState)
+	{
+		// Custom 타이틀 바와 슬라이드 메뉴 초기화
+		super.onCreate(savedInstanceState);
+		requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
+		win = getWindow();
+		win.setContentView(R.layout.activity_user__main);
+		getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.custom_title_bar);
+		titleTxt = (TextView) findViewById(R.id.destinationTxt);
+		titleTxt.setText("목적지를 설정해주세요");
+		deviceWidth = new DisplayMetrics();
+		getWindowManager().getDefaultDisplay().getMetrics(deviceWidth);
+		widthOfDevice = deviceWidth.widthPixels;
+		Open_Slider = AnimationUtils.loadAnimation(this, android.R.anim.slide_in_left);
+		Close_Slider = AnimationUtils.loadAnimation(this, R.anim.slide_out_left);
+		Open_Slider.setAnimationListener(new AnimationListener()
+		{
+			...
+
+		// Custom 타이틀 바와 슬라이드 메뉴 초기화 끝
+		// Map init
+		coder = new Geocoder(this, Locale.KOREA);
+		mapOnActivity = ((MapFragment) getFragmentManager().findFragmentById(R.id.userMap)).getMap();
+		locationManager = ((LocationManager) getSystemService(Context.LOCATION_SERVICE));
+		locationListener = new LocationListener()
+		{
+
+			@Override
+			public void onLocationChanged(Location locationOfGPS)
+			{
+				Lat = locationOfGPS.getLatitude();
+				Lng = locationOfGPS.getLongitude();
+				if (!firstInit)
+				{
+					CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(new LatLng(Lat, Lng), 17);
+					mapOnActivity.moveCamera(cameraUpdate);
+					Find_Driver DriverSpreader = new Find_Driver(Lat, Lng, userCon, getSharedPreferences("UserInfo", 0).getString("SearchRange", ""));
+					DriverSpreader.execute();
+					firstInit = true;
+					new DB_CustomerRollBack(userCon, getSharedPreferences("UserInfo", 0).getString("UserID", "")).execute();
+					new DB_GetMessage(userCon, getSharedPreferences("UserInfo", 0).getString("UserID", ""), 0).execute();
+				}
+				...
+			}
+		};
+		try
+		{
+			setListener();
+		}
+		catch (Exception ex)
+		{
+			Intent gpsOptionsIntent = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+			startActivityForResult(gpsOptionsIntent, 1);
+			Toast.makeText(getApplicationContext(), "GPS 설정을 무선 네트워크 사용에 체크해주세요!", 1000).show();
+		}
+		...
+          </code>
+          </pre>
+           
           </p>
           <img src="images/t1.jpg" alt=""/> </div>
         <blockquote>C#으로 구현된 관리자 앱으로 매출조회, 문의조회, 현재 이용자 조회등의 기능을 구현하였습니다.</blockquote>

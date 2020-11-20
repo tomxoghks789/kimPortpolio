@@ -97,7 +97,80 @@
         <p><br>
           SQLite를 활용하여 즐겨찾기를 추가할 수 있으며 메인화면에서 조회가 가능하고 즐겨찾기 탭에서 클릭하여 즐겨찾기를 삭제 할 수도 있습니다.<br>
         </p>
-        <p>각각의 Station은 Station 클래스를 만들어 관리하였습니다.<br>
+        <pre><code class="java">
+// SQLite 관련 코드
+public void createDatabase()
+{
+	database = openOrCreateDatabase(dbName, MODE_WORLD_WRITEABLE, null);
+}
+
+public void createTable()
+{
+	try
+	{
+		database.execSQL(createTable);
+	}
+	catch (Exception e)
+	{
+		e.printStackTrace();
+	}
+}
+
+public static void insert(String stId, String busNm, String RouteId)
+{
+	database.beginTransaction();
+	try
+	{
+		String sql = "insert into favorite (stId, busNm, RouteId) values (" + stId + "," + busNm + "," + RouteId + ");";
+		database.execSQL(sql);
+		database.setTransactionSuccessful();
+	}
+	catch (Exception e)
+	{
+		e.printStackTrace();
+	}
+	finally
+	{
+		database.endTransaction();
+	}	
+}
+
+public void deletedata(String stId, String busNm)
+{
+	String sql = "delete from favorite  where stId = " + stId + " and busNm = " + busNm + ";";
+	database.execSQL(sql);
+	this.stId = new ArrayList<String>();
+	this.busNm = new ArrayList<String>();
+	RouteId = new ArrayList<String>();
+	select();
+}
+
+public void select()
+{
+	this.stId = new ArrayList<String>();
+	this.busNm = new ArrayList<String>();
+	RouteId = new ArrayList<String>();
+	String sql = "select * from favorite";
+	Cursor result = database.rawQuery(sql, null);
+	try
+	{
+		while (result.moveToNext())
+		{
+			stId.add(result.getString(0));
+			busNm.add(result.getString(1));
+			RouteId.add(result.getString(2));
+		}
+		result.close();
+		ShowData();
+	}
+	catch (Exception e)
+	{
+		e.printStackTrace();
+	}
+}
+        </code>
+        </pre>
+		<p>각각의 Station은 Station 클래스를 만들어 관리하였습니다.<br>
         </p>
         <pre><code class="java">
 public class Station
@@ -187,7 +260,7 @@ public class Station
 }
 </code></pre>
         <p><br>
-          API를 통한 정류소 데이터 조회는 다음과 같이 AsyncTask로 구현하였다.<br>
+          API를 통한 정류소 데이터 조회는 다음과 같이 AsyncTask로 구현하였습니다.<br>
           <br>
         </p>
         <pre><code class="java">
